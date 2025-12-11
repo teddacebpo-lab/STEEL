@@ -1,0 +1,5 @@
+{
+  "name": "HTS Derivative Analyzer",
+  "description": "An intelligent tool to verify HTS codes against Aluminum and Steel derivative lists using Gemini AI.",
+  "requestFramePermissions": []
+}
