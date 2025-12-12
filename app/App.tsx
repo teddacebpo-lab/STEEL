@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Database, ArrowRight, Loader2, History, Lock, Unlock, Settings, Moon, Sun, BookOpen, RefreshCw, Shield, LayoutDashboard, ChevronRight, X, FileText, ScanText, FileSearch, AlertCircle } from 'lucide-react';
+import { Search, Database, ArrowRight, Loader2, History, Lock, Unlock, Settings, Moon, Sun, BookOpen, RefreshCw, Shield, LayoutDashboard, ChevronRight, X, FileText, ScanText, FileSearch, AlertCircle, Cpu } from 'lucide-react';
 import DocumentUploader from './components/DocumentUploader';
 import AnalysisResultCard from './components/AnalysisResultCard';
 import ProvisionResultCard from './components/ProvisionResultCard';
@@ -7,7 +7,8 @@ import LoadingAnalysis from './components/LoadingAnalysis';
 import ManualEntryManager from './components/ManualEntryManager';
 import ReferenceInfo from './components/ReferenceInfo';
 import Tooltip from './components/Tooltip';
-import { checkHtsCode, extractDocumentHeadings, lookupHtsProvision } from './services/geminiService';
+import { checkHtsCode as geminiCheckHtsCode, extractDocumentHeadings as geminiExtractDocumentHeadings, lookupHtsProvision as geminiLookupHtsProvision } from './services/geminiService';
+import { checkHtsCode as openaiCheckHtsCode, extractDocumentHeadings as openaiExtractDocumentHeadings, lookupHtsProvision as openaiLookupHtsProvision } from './services/openaiService';
 import { 
   saveContextToDb, 
   getContextFromDb, 
@@ -48,6 +49,14 @@ function App() {
     return 'light';
   });
 
+  // AI Provider State
+  const [aiProvider, setAiProvider] = useState<'gemini' | 'openai'>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('aiProvider') as 'gemini' | 'openai' || 'gemini';
+    }
+    return 'gemini';
+  });
+
   // Admin State
   const [viewMode, setViewMode] = useState<'user' | 'admin'>('user');
   const [adminPassword, setAdminPassword] = useState('');
@@ -61,6 +70,11 @@ function App() {
     root.classList.add(theme);
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  // Save AI Provider
+  useEffect(() => {
+    localStorage.setItem('aiProvider', aiProvider);
+  }, [aiProvider]);
 
   // Load Context and Entries from DB on Mount
   useEffect(() => {
@@ -120,11 +134,13 @@ function App() {
 
     try {
       if (searchMode === 'compliance') {
+        const checkHtsCode = aiProvider === 'gemini' ? geminiCheckHtsCode : openaiCheckHtsCode;
         const data = await checkHtsCode(documentContext, manualEntries, input);
         setResult(data);
         setSearchedHts(input);
         setHistory(prev => [{ code: input, found: data.found }, ...prev.slice(0, 4)]);
       } else {
+        const lookupHtsProvision = aiProvider === 'gemini' ? geminiLookupHtsProvision : openaiLookupHtsProvision;
         const data = await lookupHtsProvision(documentContext, input);
         setProvisionResult(data);
         setSearchedProvision(input);
@@ -155,6 +171,7 @@ function App() {
     if (!documentContext) return;
     setIsScanningDoc(true);
     try {
+      const extractDocumentHeadings = aiProvider === 'gemini' ? geminiExtractDocumentHeadings : openaiExtractDocumentHeadings;
       const headings = await extractDocumentHeadings(documentContext);
       const updatedContext = { ...documentContext, extractedHeadings: headings };
       setDocumentContext(updatedContext);
@@ -219,6 +236,15 @@ function App() {
 
             {/* Right Actions */}
             <div className="flex items-center gap-2 md:gap-4">
+              <Tooltip content={aiProvider === 'gemini' ? 'Switch to OpenAI' : 'Switch to Gemini'} position="bottom">
+                <button
+                  onClick={() => setAiProvider(prev => prev === 'gemini' ? 'openai' : 'gemini')}
+                  className="p-2.5 rounded-full hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-all text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400"
+                >
+                  <Cpu className="w-5 h-5" />
+                </button>
+              </Tooltip>
+
               <Tooltip content={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'} position="bottom">
                 <button
                   onClick={toggleTheme}
