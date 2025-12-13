@@ -1,8 +1,9 @@
-import { GoogleGenerativeAI, Type } from "@google/generative-ai";
+import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, DocumentContext, HeadingInfo, ManualEntry, ProvisionResult } from "../types";
 
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-
+const genAI = new GoogleGenAI({
+  apiKey: import.meta.env.VITE_GEMINI_API_KEY
+});
 const RESPONSE_SCHEMA = {
   type: Type.OBJECT,
   properties: {
