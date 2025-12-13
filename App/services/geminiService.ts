@@ -1,7 +1,7 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenerativeAI, Type } from "@google/generative-ai";
 import { AnalysisResult, DocumentContext, HeadingInfo, ManualEntry, ProvisionResult } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
 const RESPONSE_SCHEMA = {
   type: Type.OBJECT,
@@ -158,8 +158,8 @@ export const checkHtsCode = async (
       `,
     });
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+    const response = await model.generateContent({
+      model: "gemini-1.5-flash",
       contents: { parts },
       config: {
         responseMimeType: "application/json",
