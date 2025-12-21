@@ -160,7 +160,7 @@ export const checkHtsCode = async (
     });
 
     const response = await model.generateContent({
-      model: "gemini-1.5-flash",
+      model: "gemini-2.0-flash",
       contents: { parts },
       config: {
         responseMimeType: "application/json",
