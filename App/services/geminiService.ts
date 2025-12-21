@@ -159,7 +159,7 @@ export const checkHtsCode = async (
       `,
     });
 
-    const response = await model.generateContent({
+    const response = await genAI.models.generateContent({
       model: "gemini-2.0-flash",
       contents: { parts },
       config: {
@@ -229,7 +229,7 @@ export const lookupHtsProvision = async (
       `,
     });
 
-    const response = await ai.models.generateContent({
+    const response = await genAI.models.generateContent({
       model: "gemini-2.0-flash",
       contents: { parts },
       config: {
@@ -283,7 +283,7 @@ export const extractDocumentHeadings = async (
       `,
     });
 
-    const response = await ai.models.generateContent({
+    const response = await genAI.models.generateContent({
       model: "gemini-2.5-flash",
       contents: { parts },
       config: {
