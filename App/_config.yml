@@ -1,0 +1,9 @@
+exclude:
+  - node_modules
+  - App/node_modules
+  - vendor
+  - Gemfile
+  - Gemfile.lock
+  - package.json
+  - package-lock.json
+  - yarn.lock
