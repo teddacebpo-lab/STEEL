@@ -1,9 +1,19 @@
+title: STEEL
+theme: jekyll-theme-primer
+source: docs
+
 exclude:
   - node_modules
-  - App/node_modules
   - vendor
-  - Gemfile
-  - Gemfile.lock
   - package.json
   - package-lock.json
   - yarn.lock
+  - pnpm-lock.yaml
+  - gemini-backend
+  - App
+  - api
+  - scripts
+  - .vercel
+  - .env
+  - .env.local
+  - README.md
