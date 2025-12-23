@@ -1,5 +1,6 @@
 title: STEEL
 theme: jekyll-theme-primer
+source: docs
 
 exclude:
   - node_modules
